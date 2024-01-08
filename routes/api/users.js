@@ -42,7 +42,7 @@ router.post('/login',(req,res)=>{
         name:req.body.name,
         email:req.body.email
     }
-    console.log(userDetail)
+    
     jwt.sign({user:userDetail},"secretKey",(err,token)=>{
         res.send({jwt:token})
     })
@@ -64,7 +64,7 @@ router.post("/verify",verifyToken,(req,res)=>{
 function verifyToken(req,res,next){
   
     const header= req.headers['authorization']
-    console.log(header,"header")
+  
     if(typeof header !=='undefined'){
         req.token = header
         next()

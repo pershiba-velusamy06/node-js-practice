@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const uuid = require('uuid');
-
+const jwt = require('jsonwebtoken')
 const users = require('../../users');
 
 // get all users
@@ -36,6 +36,43 @@ router.get('/:id', (req, res) => {
     }
 })
 
+router.post('/login',(req,res)=>{
+    let userDetail={
+        id:req?.body.id,
+        name:req.body.name,
+        email:req.body.email
+    }
+    console.log(userDetail)
+    jwt.sign({user:userDetail},"secretKey",(err,token)=>{
+        res.send({jwt:token})
+    })
+})
+
+
+router.post("/verify",verifyToken,(req,res)=>{
+  
+    jwt.verify(req.token,"secretKey",(err,authData)=>{
+        if(err){
+          
+            res.send({message:'un authorized',statusCode:401})
+        }else{
+            res.send({message:'verified user',userDetails:authData})
+        }
+    })
+})
+
+function verifyToken(req,res,next){
+  
+    const header= req.headers['authorization']
+    console.log(header,"header")
+    if(typeof header !=='undefined'){
+        req.token = header
+        next()
+    }else{
+        res.send({message:'unauthorized',statusCode:401})
+    }
+}
+
 router.post('/addUser', (req, res) => {
     try {
         let newUser = {
@@ -64,6 +101,8 @@ router.post('/addUser', (req, res) => {
 
 
 })
+
+
 
 
 router.put('/updateuser/:id', (req, res) => {

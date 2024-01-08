@@ -9,6 +9,11 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/users',usersRoutes)
 
+
+
+
+
+
 app.listen(Port,()=>{
 console.log(`Node js server is running in port :${Port}`)
 })

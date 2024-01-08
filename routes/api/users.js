@@ -8,7 +8,13 @@ const users = require('../../users');
 
 router.get('/', (req, res) => {
     console.log('called')
-    res.json(users)
+   
+    let resultant = {
+        result:users,
+        message: 'Users fetched successfully',
+        statusCode: 200
+    }
+    res.send(resultant)
 });
 
 // get user by id
@@ -16,9 +22,17 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
     const filteredArray = users.filter((user) => user.id === parseInt(req.params.id))
     if (filteredArray.length > 0) {
-        res.send(filteredArray)
+        let resultant = {
+            result:filteredArray,
+            message: 'User fetched successfully',
+            statusCode: 200
+        }
+        res.send(resultant)
     } else {
-        res.sendStatus(400)
+        res.send({
+            message: 'user not found',
+            statusCode: 201
+        })
     }
 })
 
@@ -29,21 +43,30 @@ router.post('/addUser', (req, res) => {
             name: req.body.name,
             email: req.body.email
         }
-    
+
         if (!req.body.name || !req.body.email) {
-            return res.sendStatus(400)
-        } 
+         return   res.send({
+                message: 'Required feild is empty',
+                statusCode: 202
+            })
+        }
         users.push(newUser)
-        res.send(users)
+    
+        let resultant = {
+            result:users,
+            message: 'User created successfully',
+            statusCode: 200
+        }
+        res.send(resultant)
     } catch (error) {
-     console.log(error,"error")   
+        console.log(error, "error")
     }
-  
+
 
 })
 
 
-router.put('/updateuser/:id',(req,res)=>{
+router.put('/updateuser/:id', (req, res) => {
     console.log(req.params.id)
 
     try {
@@ -52,26 +75,45 @@ router.put('/updateuser/:id',(req,res)=>{
             name: req.body.name,
             email: req.body.email
         }
-        let index= users.findIndex((user)=>user.id===parseInt(req.params.id))
+        let index = users.findIndex((user) => user.id === parseInt(req.params.id))
         console.log(index)
-        if(index>-1){
-            users[index]=newUser
-            console.log(users)
-            res.send([newUser])
-        }else{
-            res.sendStatus(202)
+        if (index > -1) {
+            users[index] = newUser
+            let resultant = {
+                result: [newUser],
+                message: 'User updated successfully',
+                statusCode: 200
+            }
+            res.send(resultant)
+        } else {
+            res.send({
+                message: 'user not found',
+                statusCode: 201
+            })
         }
     } catch (error) {
-        console.log(error,"error") 
+        console.log(error, "error")
     }
 })
 
-router.delete('/deleteUser/:id',(req,res)=>{
-    const filteredArray = users.filter((user) => user.id !== parseInt(req.params.id))
-    if (filteredArray.length > 0) {
-        res.send(filteredArray)
+router.delete('/deleteUser/:id', (req, res) => {
+    let index = users.findIndex((user) => user.id === parseInt(req.params.id))
+   
+    if (index > -1) {
+        const filteredArray = users.filter((user) => user.id !== parseInt(req.params.id))
+
+        let resultant = {
+            result: filteredArray,
+            message: 'User deleted successfully',
+            statusCode: 200
+        }
+        res.send(resultant)
     } else {
-        res.sendStatus(400)
+        res.send({
+            message: 'user not found',
+            statusCode: 201
+        })
+     
     }
 })
 
